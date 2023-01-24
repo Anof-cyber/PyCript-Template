@@ -22,6 +22,12 @@ Encryption and Decryption code for Pycript Extensions with common JavaScript enc
 - Node JS
 - NPM
 
+## Installation
+
+```bash
+npm install
+```
+
 ## Code Added
 
 - [X] Custom Request Type - Fetch Key and IV from Headers
