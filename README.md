@@ -24,7 +24,7 @@ Encryption and Decryption code for Pycript Extensions with common JavaScript enc
 
 ## Installation
 
-```bash
+```console
 npm install
 ```
 
