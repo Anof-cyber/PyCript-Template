@@ -50,5 +50,5 @@ var bytes  = CryptoJS.AES.encrypt(body, CryptoJS.enc.Utf8.parse(key),
 });
 
 
-var originalText = bytes.toString(CryptoJS.enc.Utf8);
+var originalText = bytes.toString();
 console.log(originalText); 

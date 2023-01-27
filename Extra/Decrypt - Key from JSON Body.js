@@ -32,7 +32,7 @@ var bytes  = CryptoJS.AES.decrypt(ciphertext, CryptoJS.enc.Utf8.parse(key),
     mode: CryptoJS.mode.CBC
 });
 
-var originalText = bytes.toString();
+var originalText = bytes.toString(CryptoJS.enc.Utf8);
 
 //create the updated json object to disply in burp
 var output = JSON.stringify({"data":originalText,"key":key,"iv":iv})
