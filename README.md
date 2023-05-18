@@ -19,19 +19,29 @@ Encryption and Decryption code for Pycript Extensions with common JavaScript enc
 
 ## Requirements
 
-- Node JS
-- NPM
+- Node JS + NPM / Java / Python
 
 ## Installation
 
+#### JavaScript
 ```console
 npm install
 ```
+#### Python
+```console
+pip install -r requirements.txt
+```
+
+#### Java
+- Java source is already compiled to jar file and ready to use directly.
+- If you need to modify and recompile make sure to add the [JSON library](https://github.com/stleary/JSON-java)
+
 
 ## Code Added
 
 - [X] Custom Request Type - Fetch Key and IV from Headers
 - [X] Custom Body Type - Fetch Key and IV from Request Body
+- [X] Custom Request(Edit Header) Type - Allow you to update the header to modify the request signature
 - [X] AES Encryption ECB 128
 - [X] AES Decryption ECB 128
 - [X] AES Encryption CBC 128

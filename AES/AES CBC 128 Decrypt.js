@@ -10,9 +10,10 @@ program
   
 const options = program.opts();
   
-var key = "1234"
+var key = "mysecretkey12345"
+var iv = "n2r5u8x/A%D*G-Ka"
 var ciphertext = Buffer.from(options.data, 'base64').toString('utf8');
-var iv = "1234"
+
 var bytes  = CryptoJS.AES.decrypt(ciphertext, CryptoJS.enc.Utf8.parse(key),
 {	
 	keySize: 128 / 8,

@@ -10,7 +10,7 @@ program
   
 const options = program.opts();
   
-var key = "1234"
+var key = "mysecretkey12345"
 const plaintext = Buffer.from(options.data, 'base64').toString('utf8');
 var bytes  = CryptoJS.AES.encrypt(plaintext, CryptoJS.enc.Utf8.parse(key),
 {	
