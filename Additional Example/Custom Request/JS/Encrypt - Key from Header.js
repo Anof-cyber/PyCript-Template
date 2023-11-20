@@ -32,8 +32,8 @@ const options = program.opts();
 var body = Buffer.from(options.data, 'base64').toString('utf8');
 
 //[POST /crypto/myprofile/ HTTP/1.1, Host: localhost:8000, Accept-Encoding: gzip, deflate, Accept-Language: en-US;q=0.9,en;q=0.8, User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.5060.134 Safari/537.36, Connection: close, Key: 1234, Iv: 1234, Cache-Control: max-age=0, Content-Type: application/x-www-form-urlencoded, Content-Length: 24]
-var header = options.header
-
+//from version 0.3 header is base64 encoded
+var header =  Buffer.from(options.header, 'base64').toString('utf8')
  
 
 var headersplit = header.split(', ')

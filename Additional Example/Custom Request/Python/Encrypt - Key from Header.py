@@ -40,8 +40,9 @@ def aes_cbc_encrypt(plaintext, key, iv):
 
 ciphertext = b64decode(args.data).decode('utf-8')
 
+#from version 0.3 header is base64 encoded
+header_data = b64decode(args.header).decode('utf-8')
 
-header_data = args.header
 
 pairs = header_data.split(',')
 

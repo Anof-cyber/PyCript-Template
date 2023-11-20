@@ -29,7 +29,8 @@ program
 const options = program.opts();
 var body = Buffer.from(options.data, 'base64').toString('utf8');
 
-var header = options.header
+//from version 0.3 header is base64 encoded
+var header =  Buffer.from(options.header, 'base64').toString('utf8')
 
  
 

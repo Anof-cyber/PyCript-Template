@@ -19,7 +19,9 @@ public class AESCBC128Encrypt {
             }
             if ("-h".equals(args[i])) {
                 String headerStr = args[i + 1];
-                String[] headerArr = headerStr.substring(1, headerStr.length() - 1).split(", ");
+                byte[] decodedBytes = Base64.getDecoder().decode(headerStr); // Decode base64
+                String decodedHeaderStr = new String(decodedBytes);
+                String[] headerArr = decodedHeaderStr.substring(1, decodedHeaderStr.length() - 1).split(", ");
                 for (String header : headerArr) {
                     String[] keyValue = header.split(": ");
                     if ("Key".equals(keyValue[0])) {
