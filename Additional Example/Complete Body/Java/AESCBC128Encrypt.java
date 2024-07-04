@@ -1,6 +1,9 @@
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import org.json.JSONObject;
@@ -27,7 +30,15 @@ public class AESCBC128Encrypt {
             return;
         }
 
-        String base64Data = args[1];
+        String ciphertextfilepath = args[1];
+        String base64Data = null;
+        try (FileReader reader = new FileReader(ciphertextfilepath)) {
+            JSONObject jsonObject = new JSONObject(reader);
+            base64Data = (String) jsonObject.get("data");
+
+        } catch (IOException  e) {
+            System.err.println("Error reading JSON file: " + e.getMessage());
+        };
 
         try {
             // Decode the Base64 data

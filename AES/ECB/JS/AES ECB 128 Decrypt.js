@@ -1,18 +1,26 @@
 // String Decryption with AES 128 UTF8
 //KtKB81Oamvuzo9entPFKZQ==
+const fs = require('fs');
+const path = require('path');
 var CryptoJS = require("crypto-js");
-const program = require("commander");
+const { program } = require('commander');
 const { Buffer } = require('buffer');
+
 program
-  .option("-d, --data <data>", "Data to process")
-  .parse(process.argv);
+  .option('-d, --data <file_path>', 'Path to JSON file containing base64 encoded + encrypted data');
   
-  
+program.parse(process.argv);
 const options = program.opts();
+ 
+const filePath = options.data;
+const absoluteFilePath = path.resolve(filePath);
+var data = fs.readFileSync(absoluteFilePath).toString();
+const jsonData = JSON.parse(data);
+const base64Data = jsonData.data; 
+const ciphertext = Buffer.from(base64Data, 'base64').toString('utf8');
   
 var key = "mysecretkey12345"
 
-var ciphertext = Buffer.from(options.data, 'base64').toString('utf8');
 var bytes  = CryptoJS.AES.decrypt(ciphertext, CryptoJS.enc.Utf8.parse(key),
 {	
 	keySize: 128 / 8,

@@ -7,18 +7,11 @@ import json
 import hashlib
 
 # Create an argument parser
-parser = argparse.ArgumentParser(description='Process data argument',add_help=False)
-parser.add_argument('-d', '--data', help='Input data')
-parser.add_argument('-h', '--header', help='header data')
+parser = argparse.ArgumentParser(description='Process data argument')
+parser.add_argument('-d', '--data', help='File path with encrypted data + base64 in JSON format')
 
 # Parse the arguments
 args = parser.parse_args()
-
-
-
-
-
-
 
 
 def aes_cbc_decrypt(ciphertext, key, iv):
@@ -56,11 +49,16 @@ def update_signature(decoded_header,updatedbody):
     return updated_header
 
 
-jsondata = b64decode(args.data).decode('utf-8')
-decoded_header = b64decode(args.header).decode('utf-8')
+
+with open(args.data, 'r') as file:    
+    content_body = json.load(file).get("data")
+    content_header = json.load(file).get("header")
+        
+jsondata = b64decode(content_body).decode('utf-8')
+decoded_header = b64decode(content_header).decode('utf-8')
+
 
 data = json.loads(jsondata)
-
 ciphertext = data['user_id']
 key = "mysecretkey12345"
 iv = "n2r5u8x/A%D*G-Ka"

@@ -2,21 +2,24 @@
 //{"data":"{\"userid\":1}","key":"1234","iv":"12345"}
 //encrypt json body with key and iv in the json object
 
+const fs = require('fs');
+const path = require('path');
 var CryptoJS = require("crypto-js");
-const program = require("commander");
+const { program } = require('commander');
 const { Buffer } = require('buffer');
 
 program
-  .option("-d, --data <data>", "Data to process")
-  .parse(process.argv);
-
+  .option('-d, --data <file_path>', 'Path to JSON file containing base64 encoded + encrypted data');
+  
+program.parse(process.argv);
 const options = program.opts();
-
-//Get Command Line Arguments value
-var Requestbody = options.data
-
-//Base64 decode and parse it for JSON
-const decodedString = Buffer.from(Requestbody, 'base64').toString('utf8');
+ 
+const filePath = options.data;
+const absoluteFilePath = path.resolve(filePath);
+var data = fs.readFileSync(absoluteFilePath).toString();
+const jsonData = JSON.parse(data);
+const base64Data = jsonData.data; 
+const decodedString = Buffer.from(base64Data, 'base64').toString('utf8');
 var parsedata = JSON.parse(decodedString)
 
 //Fetch Key, IV and plain text from json object

@@ -1,21 +1,15 @@
 import argparse
 from base64 import b64decode
+import json
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.padding import PKCS7
 from cryptography.hazmat.backends import default_backend
 # Create an argument parser
 parser = argparse.ArgumentParser(description='Process data argument')
-parser.add_argument('-d', '--data', help='Input data')
+parser.add_argument('-d', '--data', help='File path with encrypted data + base64 in JSON format')
 
 # Parse the arguments
 args = parser.parse_args()
-
-
-
-
-
-
-
 
 def aes_cbc_decrypt(ciphertext, key, iv):
     # Convert the key and IV to bytes
@@ -39,7 +33,11 @@ def aes_cbc_decrypt(ciphertext, key, iv):
 
 
 
-ciphertext = b64decode(args.data).decode('utf-8')
+with open(args.data, 'r') as file:
+        content = json.load(file).get("data")
+        
+ciphertext = b64decode(content).decode('utf-8')
+
 key = "mysecretkey12345"
 iv = "n2r5u8x/A%D*G-Ka"
 

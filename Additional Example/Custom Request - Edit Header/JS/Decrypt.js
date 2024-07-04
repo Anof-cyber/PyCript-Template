@@ -1,22 +1,21 @@
+const fs = require('fs');
+const path = require('path');
 var CryptoJS = require("crypto-js");
-const program = require("commander");
-const {
-    Buffer
-} = require('buffer');
-
+const { program } = require('commander');
+const { Buffer } = require('buffer');
 
 program
-    .option("-d, --data <data>", "Body")
-    .option("-h, --header <data>", "Header")
-    .parse(process.argv);
-
-
+  .option('-d, --data <file_path>', 'Path to JSON file containing base64 encoded + encrypted data');
+  
+program.parse(process.argv);
 const options = program.opts();
-var body = Buffer.from(options.data, 'base64').toString('utf8');
-
-var header = Buffer.from(options.header, 'base64').toString('utf8');
-
-
+ 
+const filePath = options.data;
+const absoluteFilePath = path.resolve(filePath);
+var data = fs.readFileSync(absoluteFilePath).toString();
+const jsonData = JSON.parse(data);
+const body = Buffer.from(jsonData.data, 'base64').toString('utf8');
+var header = Buffer.from(jsonData.header, 'base64').toString('utf8');
 
 var parsedata = JSON.parse(body)
 

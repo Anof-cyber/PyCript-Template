@@ -1,6 +1,10 @@
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import org.json.JSONObject;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -25,16 +29,25 @@ public class AESCBC128Decrypt {
 
     public static void main(String[] args) {
         if (args.length != 2 || !args[0].equals("-d")) {
-            System.out.println("Usage: java AESCBCDecrypt -d <your-base64-ciphertext>");
+            System.out.println("Usage: java AESCBCDecrypt -d cipher-data-file-path");
             return;
         }
+        String ciphertextfilepath = args[1];
+        String base64Data = null;
+        try (FileReader reader = new FileReader(ciphertextfilepath)) {
+            JSONObject jsonObject = new JSONObject(reader);
+            base64Data = (String) jsonObject.get("data");
 
-        String base64Ciphertext = args[1];
+        } catch (IOException  e) {
+            System.err.println("Error reading JSON file: " + e.getMessage());
+        };
+
+        
         String key = "mysecretkey12345";
         String iv = "n2r5u8x/A%D*G-Ka";
 
         try {
-            String ciphertext = new String(Base64.getDecoder().decode(base64Ciphertext), StandardCharsets.UTF_8);
+            String ciphertext = new String(Base64.getDecoder().decode(base64Data), StandardCharsets.UTF_8);
             String decryptedData = aesCbcDecrypt(ciphertext, key, iv);
             System.out.println(decryptedData);
         } catch (Exception e) {

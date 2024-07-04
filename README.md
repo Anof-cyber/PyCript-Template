@@ -3,7 +3,7 @@
   <img src="https://i.ibb.co/KqGXSq0/Py-Cript-Banner.png" />
 </p>
 
-Encryption and Decryption code for Pycript Extensions with common JavaScript encryption logic.
+Encryption and Decryption code for Pycript Extensions with common  encryption logic.
 
 ## Support
 
@@ -20,6 +20,7 @@ Encryption and Decryption code for Pycript Extensions with common JavaScript enc
 ## Requirements
 
 - Node JS + NPM / Java / Python
+- This are Demo Script template, PyCript v0.4 does not have language restrictions you can use any language like C, C++, Go, Swift, Python etc.
 
 ## Installation
 
@@ -33,8 +34,23 @@ pip install -r requirements.txt
 ```
 
 #### Java
-- Java source is already compiled to jar file and ready to use directly.
-- If you need to modify and recompile make sure to add the [JSON library](https://github.com/stleary/JSON-java)
+- Java source should compiled to jar file for PyCript
+- make sure to add the [JSON library](https://github.com/stleary/JSON-java)
+
+#### Go Lang
+- You don't need external lib, you can run it directly but recommended to compile it.
+
+#### Powershell
+- Windows system is required
+
+
+#### Bash Script
+- Linux System with below library 
+
+```console
+sudo apt install jq openssl
+```
+
 
 
 ## Code Added
