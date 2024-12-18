@@ -23,21 +23,23 @@ const plaintext = buffer.toString('utf8') // convert it string
 
 
 // call the functions to handle decrpytion, headers 
-const originalText = Encryption(plaintext);
-const updatedHeader = Read_parse_Header(headersRaw);
-
+const originalText = Encryption(plaintext,headersRaw);
 // convert the updated string to byte array again
 const updated_output_byte = Array.from(originalText).map(char => char.charCodeAt(0));
-var output = updated_output_byte +"\n--BODY_END--\n"+updatedHeader
+var output = updated_output_byte +"\n--BODY_END--\n"+headersRaw
 // write to same temp file in same formamt body\n--BODY_END--\nheader
 fs.writeFileSync(absoluteFilePath,output)
 
 
 
 
-function Encryption(plaintext) {
-  var key = "mysecretkey12345"
-  var iv = "n2r5u8x/A%D*G-Ka"
+function Encryption(plaintext,header) {
+
+  const headersplit = header.split(/\r?\n/);
+  // Extract specific header values
+  const key = headersplit.find(line => line.startsWith('Key:'));
+  const iv = headersplit.find(line => line.startsWith('Iv:'));
+  
   var bytes  = CryptoJS.AES.encrypt(plaintext, CryptoJS.enc.Utf8.parse(key),
   {	
     keySize: 128 / 8,
@@ -47,15 +49,5 @@ function Encryption(plaintext) {
   var originalText = bytes.toString();
   return originalText;
   }
-
-function Read_parse_Header(headersRaw) {
-
-// logic to read/edit header
-
-return headersRaw;
-
-}
-
-
 
 

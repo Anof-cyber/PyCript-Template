@@ -24,7 +24,7 @@ const plaintext = buffer.toString('utf8') // convert it string
 
 // call the functions to handle decrpytion, headers 
 const originalText = Encryption(plaintext);
-const updatedHeader = Read_parse_Header(headersRaw);
+const updatedHeader = Read_parse_Header(headersRaw,originalText);
 
 // convert the updated string to byte array again
 const updated_output_byte = Array.from(originalText).map(char => char.charCodeAt(0));
@@ -48,12 +48,22 @@ function Encryption(plaintext) {
   return originalText;
   }
 
-function Read_parse_Header(headersRaw) {
+function Read_parse_Header(header,updatedbody) {
 
 // logic to read/edit header
+var headersplit = header.split(/\r?\n/)
 
-return headersRaw;
+// go through json and update the signature header with updated body md5 hash
+for (var i = 0; i < headersplit.length; i++) {
+    if (headersplit[i].startsWith('Signature:')) {
+        headersplit[i] = 'Signature: ' + CryptoJS.MD5(updatedbody).toString();
+        break;
+    }
+}
 
+// join the header to as original format
+var updatedheader = headersplit.join("\r\n")
+return updatedheader
 }
 
 

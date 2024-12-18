@@ -4,7 +4,7 @@ const path = require('path');
 var CryptoJS = require("crypto-js");
 const { program } = require('commander');
 const { Buffer } = require('buffer');
-
+const crypto = require('crypto');
 program
   .option('-d, --data <file_path>', 'Path to JSON file containing base64 encoded + encrypted data');
   
@@ -18,8 +18,8 @@ const bodyEndMarker = '\n--BODY_END--\n';
 const [byteArrayStr, headersRaw] = data.split(bodyEndMarker);
 
 const byteArray = JSON.parse(byteArrayStr.trim())
-const buffer = Buffer.from(byteArray); // Convert byte array to Buffer
-const ciphertext = buffer.toString('utf8') // convert it string 
+const ciphertext = Buffer.from(byteArray); // Convert byte array to Buffer
+//const ciphertext = buffer.toString('utf8') // Since its raw data, contain non ascii, avoid using to string instead pass the buffer directly, depends on the enc/dec library
 
 
 // call the functions to handle decrpytion, headers 
@@ -36,16 +36,29 @@ fs.writeFileSync(absoluteFilePath,output)
 
 
 function Decryption(ciphertext) {
-  var key = "mysecretkey12345"
-  var iv = "n2r5u8x/A%D*G-Ka"
-  var bytes  = CryptoJS.AES.decrypt(ciphertext, CryptoJS.enc.Utf8.parse(key),
-  {	
-    keySize: 128 / 8,
-    iv:  CryptoJS.enc.Utf8.parse(iv),
-      mode: CryptoJS.mode.CBC
-  });
-  var originalText = bytes.toString(CryptoJS.enc.Utf8);
-  return originalText;
+  const key = Buffer.from('mysecretkey12345');  // 128-bit key (16 bytes)
+      const iv = Buffer.from('n2r5u8x/A%D*G-Ka');   // 128-bit IV (16 bytes)
+  
+      try {
+          const decipher = crypto.createDecipheriv('aes-128-cbc', key, iv);
+          decipher.setAutoPadding(true);  // Ensure padding is handled properly
+  
+          // Decrypt the data
+          let decryptedData = decipher.update(ciphertext);
+  
+          // Handle the final block and concatenate
+          decryptedData = Buffer.concat([decryptedData, decipher.final()]);
+  
+          // Convert the decrypted data to a string
+          const decodedString = decryptedData.toString('utf8');
+  
+          return decodedString
+      } catch (err) {
+          console.error('Decryption failed:', err);
+          throw new Error('Decryption failed: ' + err.message);
+      }
+
+
   }
 
 function Read_parse_Header(headersRaw) {

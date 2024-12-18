@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <script>
+        // Function to encrypt data using AES-CBC (SubtleCrypto API)
+        async function encryptData(data) {
+            const key = new TextEncoder().encode('mysecretkey12345');  // 128-bit key (16 bytes)
+            const iv = new TextEncoder().encode('n2r5u8x/A%D*G-Ka');   // 128-bit IV (16 bytes)
+
+            // Convert JSON object to string
+            const jsonData = JSON.stringify(data);
+            
+            // Convert string to Uint8Array
+            const encoder = new TextEncoder();
+            const encodedData = encoder.encode(jsonData);
+
+            // Import AES key
+            const importedKey = await crypto.subtle.importKey(
+                "raw", 
+                key, 
+                { name: "AES-CBC" }, 
+                false, 
+                ["encrypt"]
+            );
+
+            // Encrypt data
+            const encryptedData = await crypto.subtle.encrypt(
+                { name: "AES-CBC", iv: iv },
+                importedKey,
+                encodedData
+            );
+
+            return new Uint8Array(encryptedData);
+        }
+
+
+        async function decryptData(encryptedData) {
+            const key = new TextEncoder().encode('mysecretkey12345');  // 128-bit key (16 bytes)
+            const iv = new TextEncoder().encode('n2r5u8x/A%D*G-Ka');   // 128-bit IV (16 bytes)
+
+            // Import AES key
+            const importedKey = await crypto.subtle.importKey(
+                "raw", 
+                key, 
+                { name: "AES-CBC" }, 
+                false, 
+                ["decrypt"]
+            );
+
+            // Decrypt the data
+            const decryptedData = await crypto.subtle.decrypt(
+                { name: "AES-CBC", iv: iv },
+                importedKey,
+                encryptedData
+            );
+
+            // Convert decrypted data to string and then parse it into a JSON object
+            const decoder = new TextDecoder();
+            const decryptedText = decoder.decode(decryptedData);
+            return JSON.parse(decryptedText);  // Return the decrypted JSON object
+        }
+
+        // Handle form submission
+        async function myFunction(event) {
+            // Prevent default form submission
+            event.preventDefault();
+
+            // Get form data
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Validate username (only alphanumeric characters allowed)
+            const alphanumericPattern = /^[a-zA-Z0-9]+$/;
+            if (!alphanumericPattern.test(username)) {
+                alert('Username can only contain alphanumeric characters.');
+                return;
+            }
+
+            // Create login data object (plaintext)
+            const loginData = {
+                username: username,
+                password: password
+            };
+
+            // Encrypt the entire login data object
+            const encryptedData = await encryptData(loginData);
+            console.log('Encrypted Data:', encryptedData);
+            const decryptedData = await decryptData(encryptedData);
+            
+            // Log the decrypted data to the console
+            console.log('Decrypted Data:', decryptedData);
+
+            // Send encrypted data using fetch (POST) with binary body
+            const response = await fetch('/decrypt', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/octet-stream'  // Specify binary body
+                },
+                body: encryptedData  // Send the encrypted binary data directly in the body
+            });
+
+            // Handle server response
+            const result = await response.json();
+            console.log('Server Response:', result);
+            
+            alert('Encrypted data sent successfully!');
+        }
+    </script>
+</head>
+<body>
+    <h2>Login Form</h2>
+    <form id="loginForm" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <!-- Custom submit button triggering encryption and form submission -->
+        <input type="button" onclick="myFunction(event)" value="Submit form">
+    </form>
+</body>
+</html>

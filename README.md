@@ -28,6 +28,10 @@ Encryption and Decryption code for Pycript Extensions with common  encryption lo
 ```console
 npm install
 ```
+
+---------------------------
+
+Python, Java, GO, Powershell, Bash etc no longer Maintained, PyCript still support multiple language, demo code is only maintained in JavaScript
 #### Python
 ```console
 pip install -r requirements.txt
@@ -50,15 +54,12 @@ pip install -r requirements.txt
 ```console
 sudo apt install jq openssl
 ```
-
+-------------------------------------------------
 
 
 ## Code Added
 
-- [X] Custom Request Type - Fetch Key and IV from Headers
-- [X] Custom Body Type - Fetch Key and IV from Request Body
-- [X] Custom Request(Edit Header) Type - Allow you to update the header to modify the request signature
-- [X] AES Encryption ECB 128
-- [X] AES Decryption ECB 128
+- [X] Example for Raw Encrypted Data with non ASCII 
+- [X] AES Decryption CBC 128 with Header Parsing Example
 - [X] AES Encryption CBC 128
 - [X] AES Decryption CBC 128

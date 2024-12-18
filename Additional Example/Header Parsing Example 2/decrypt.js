@@ -19,12 +19,12 @@ const [byteArrayStr, headersRaw] = data.split(bodyEndMarker);
 
 const byteArray = JSON.parse(byteArrayStr.trim())
 const buffer = Buffer.from(byteArray); // Convert byte array to Buffer
-const plaintext = buffer.toString('utf8') // convert it string 
+const ciphertext = buffer.toString('utf8') // convert it string 
 
 
 // call the functions to handle decrpytion, headers 
-const originalText = Encryption(plaintext);
-const updatedHeader = Read_parse_Header(headersRaw);
+const originalText = Decryption(ciphertext);
+const updatedHeader = Read_parse_Header(headersRaw,originalText);
 
 // convert the updated string to byte array again
 const updated_output_byte = Array.from(originalText).map(char => char.charCodeAt(0));
@@ -35,27 +35,33 @@ fs.writeFileSync(absoluteFilePath,output)
 
 
 
-function Encryption(plaintext) {
+function Decryption(ciphertext) {
   var key = "mysecretkey12345"
   var iv = "n2r5u8x/A%D*G-Ka"
-  var bytes  = CryptoJS.AES.encrypt(plaintext, CryptoJS.enc.Utf8.parse(key),
+  var bytes  = CryptoJS.AES.decrypt(ciphertext, CryptoJS.enc.Utf8.parse(key),
   {	
     keySize: 128 / 8,
     iv:  CryptoJS.enc.Utf8.parse(iv),
       mode: CryptoJS.mode.CBC
   });
-  var originalText = bytes.toString();
+  var originalText = bytes.toString(CryptoJS.enc.Utf8);
   return originalText;
   }
 
-function Read_parse_Header(headersRaw) {
+function Read_parse_Header(header,updatedbody) {
 
 // logic to read/edit header
+var headersplit = header.split(/\r?\n/)
 
-return headersRaw;
-
+// go through json and update the signature header with updated body md5 hash
+for (var i = 0; i < headersplit.length; i++) {
+    if (headersplit[i].startsWith('Signature:')) {
+        headersplit[i] = 'Signature: ' + CryptoJS.MD5(updatedbody).toString();
+        break;
+    }
 }
 
-
-
-
+// join the header to as original format
+var updatedheader = headersplit.join("\r\n")
+return updatedheader
+}
