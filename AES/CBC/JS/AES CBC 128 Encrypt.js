@@ -1,61 +1,44 @@
-// String Decryption with AES 128 UTF8
+// String Encryption with AES 128 UTF8
 const fs = require('fs');
 const path = require('path');
 var CryptoJS = require("crypto-js");
 const { program } = require('commander');
-const { Buffer } = require('buffer');
 
 program
-  .option('-d, --data <file_path>', 'Path to JSON file containing base64 encoded + encrypted data');
+  .option('-d, --data <file_path>', 'Path to file containing data');
   
 program.parse(process.argv);
 const options = program.opts();
  
 const filePath = options.data;
 const absoluteFilePath = path.resolve(filePath);
-var data = fs.readFileSync(absoluteFilePath, 'utf8')
+var data = fs.readFileSync(absoluteFilePath, 'utf8');
 const bodyEndMarker = '\n--BODY_END--\n';
-const [byteArrayStr, headersRaw] = data.split(bodyEndMarker);
+const [bodyRaw, headersRaw] = data.split(bodyEndMarker);
 
-const byteArray = JSON.parse(byteArrayStr.trim())
-const buffer = Buffer.from(byteArray); // Convert byte array to Buffer
-const plaintext = buffer.toString('utf8') // convert it string 
+// Body is already a string, no need for byte array conversion
+const plaintext = bodyRaw;
 
-
-// call the functions to handle decrpytion, headers 
-const originalText = Encryption(plaintext);
+// Call the functions to handle encryption, headers 
+const encryptedText = Encryption(plaintext);
 const updatedHeader = Read_parse_Header(headersRaw);
 
-// convert the updated string to byte array again
-const updated_output_byte = Array.from(originalText).map(char => char.charCodeAt(0));
-var output = updated_output_byte +"\n--BODY_END--\n"+updatedHeader
-// write to same temp file in same formamt body\n--BODY_END--\nheader
-fs.writeFileSync(absoluteFilePath,output)
-
-
-
+// Write to same temp file in same format body\n--BODY_END--\nheader
+var output = encryptedText + "\n--BODY_END--\n" + updatedHeader;
+fs.writeFileSync(absoluteFilePath, output, 'utf8');
 
 function Encryption(plaintext) {
-  var key = "mysecretkey12345"
-  var iv = "n2r5u8x/A%D*G-Ka"
-  var bytes  = CryptoJS.AES.encrypt(plaintext, CryptoJS.enc.Utf8.parse(key),
-  {	
+  var key = "mysecretkey12345";
+  var iv = "n2r5u8x/A%D*G-Ka";
+  var encrypted = CryptoJS.AES.encrypt(plaintext, CryptoJS.enc.Utf8.parse(key), {	
     keySize: 128 / 8,
-    iv:  CryptoJS.enc.Utf8.parse(iv),
-      mode: CryptoJS.mode.CBC
+    iv: CryptoJS.enc.Utf8.parse(iv),
+    mode: CryptoJS.mode.CBC
   });
-  var originalText = bytes.toString();
-  return originalText;
-  }
-
-function Read_parse_Header(headersRaw) {
-
-// logic to read/edit header
-
-return headersRaw;
-
+  return encrypted.toString();
 }
 
-
-
-
+function Read_parse_Header(headersRaw) {
+  // Logic to read/edit header
+  return headersRaw;
+}
